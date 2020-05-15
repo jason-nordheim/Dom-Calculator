@@ -1,85 +1,90 @@
-const SCREEN = document.querySelector('#screen');
-const CLEAR = `C`;
-const DIVIDE = `÷`;
-const MULTIPLY = `x`;
-const SUBTRACT = `-`;
-const ADD = `+`;
-const EQUALS = `=`;
+const operations = {
+    screen: document.querySelector('#screen'),
+    clear: `C`,
+    divide: `÷`,
+    multiply: `x`,
+    subtract: `-`,
+    add: `+`,
+    equals: `=`,
+    numbersEntered: [],
+    operationsEntered: [],
+    calculationResultDisplayed: false
+}
 
-let numbersEntered = [];
-let operationsEntered = [];
-let calculationResultDisplayed = false;
-
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', () => {
     buttonsContainer = document.querySelector('.buttons');
 
     for (let i = 0; i < buttonsContainer.children.length; i++) {
         const buttonPressed = buttonsContainer.children[i]
-        buttonPressed.addEventListener('click', calculatorButtonPressed);
+        //console.log(event.target)
+        buttonPressed.addEventListener('click', (event) => calculatorButtonPressed(event.target));
     }
     //console.log(buttons.children);
 });
 
-function calculatorButtonPressed(event) {
-    const btnTextValue = event.target.innerText;
-    if (event.target.classList.value != "operator") {
+function calculatorButtonPressed(target) {
+    const btnTextValue = target.innerText;
+    //console.log(target)
+    if (target.classList.value != "operator") {
         // button pressed is a number 
-        if (calculationResultDisplayed) {
-            SCREEN.innerHTML = ``;
-            calculationResultDisplayed = false;
-        }
-        SCREEN.innerHTML = `${SCREEN.innerHTML.toString()}${btnTextValue}`;
+        if (operations.calculationResultDisplayed) resetScreen();
+        operations.screen.innerHTML = `${operations.screen.innerHTML.toString()}${btnTextValue}`;
     } else {
         // button pressed is an operator 
         const operation = btnTextValue;
-        const numberEntered = parseInt(SCREEN.innerText, 10)
-        operationRequested(numberEntered, operation)
+        const numberEntered = parseInt(operations.screen.innerText, 10);
+        operationRequested(numberEntered, operation);
     }
 }
 
+function resetScreen() {
+    operations.screen.innerHTML = ``;
+    operations.calculationResultDisplayed = false;
+}
+
 function saveNumberAndClearScreen(number) {
-    numbersEntered.push(number);
-    SCREEN.innerHTML = ``;
+    operations.numbersEntered.push(number);
+    operations.screen.innerHTML = ``;
 }
 
 function operationRequested(numberEntered, operation) {
     saveNumberAndClearScreen(numberEntered);
-    console.log("BEFORE", numbersEntered, operationsEntered)
+    //console.log("BEFORE", numbersEntered, operationsEntered)
 
-    if (operation == CLEAR) { // clear everything 
-        console.log('CLEAR')
-        numbersEntered = [];
-        operationRequested = [];
-        SCREEN.innerText = ``;
-    } else if (operation == EQUALS) { // perform calcuation 
-        console.log('EQUALS')
+    if (operation == operation.clear) { // clear everything 
+        //console.log('CLEAR')
+        operations.numbersEntered = [];
+        operations.operationsEntered = [];
+        operations.screen.innerText = ``;
+    } else if (operation == operations.equals) { // perform calcuation 
+        //console.log('EQUALS')
         let result;
-        let calculation = new Calculation(numbersEntered.shift(), numbersEntered.shift());
-        let opToPerform = operationsEntered.shift();
+        let calculation = new Calculation(
+            operations.numbersEntered.shift(), operations.numbersEntered.shift()
+        );
+        let opToPerform = operations.operationsEntered.shift();
         switch (opToPerform) {
-            case ADD:
+            case operations.add:
                 result = calculation.add();
                 break;
-            case SUBTRACT:
+            case operations.subtract:
                 result = calculation.subtract();
                 break;
-            case MULTIPLY:
+            case operations.multiply:
                 result = calculation.multiply();
                 break;
-            case DIVIDE:
+            case operations.divide:
                 result = calculation.divide();
                 break;
             default:
                 alert('An error occured - Error Code: A');
         }
-        SCREEN.innerHTML = result;
-        calculationResultDisplayed = true;
+        operations.screen.innerHTML = result;
+        operations.calculationResultDisplayed = true;
     } else { // 
-        operationsEntered.push(operation);
+        operations.operationsEntered.push(operation);
     }
-
-
-    console.log("AFTER", numbersEntered, operationsEntered)
+    //console.log("AFTER", numbersEntered, operationsEntered)
 }
 
 
