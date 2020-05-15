@@ -8,6 +8,7 @@ const EQUALS = `=`;
 
 let numbersEntered = [];
 let operationsEntered = [];
+let calculationResultDisplayed = false;
 
 document.addEventListener('DOMContentLoaded', (event) => {
     buttonsContainer = document.querySelector('.buttons');
@@ -23,6 +24,10 @@ function calculatorButtonPressed(event) {
     const btnTextValue = event.target.innerText;
     if (event.target.classList.value != "operator") {
         // button pressed is a number 
+        if (calculationResultDisplayed) {
+            SCREEN.innerHTML = ``;
+            calculationResultDisplayed = false;
+        }
         SCREEN.innerHTML = `${SCREEN.innerHTML.toString()}${btnTextValue}`;
     } else {
         // button pressed is an operator 
@@ -41,11 +46,12 @@ function operationRequested(numberEntered, operation) {
     saveNumberAndClearScreen(numberEntered);
     console.log("BEFORE", numbersEntered, operationsEntered)
 
-    if (operation == CLEAR) {
+    if (operation == CLEAR) { // clear everything 
         console.log('CLEAR')
         numbersEntered = [];
         operationRequested = [];
-    } else if (operation == EQUALS) {
+        SCREEN.innerText = ``;
+    } else if (operation == EQUALS) { // perform calcuation 
         console.log('EQUALS')
         let result;
         let calculation = new Calculation(numbersEntered.shift(), numbersEntered.shift());
@@ -67,7 +73,8 @@ function operationRequested(numberEntered, operation) {
                 alert('An error occured - Error Code: A');
         }
         SCREEN.innerHTML = result;
-    } else {
+        calculationResultDisplayed = true;
+    } else { // 
         operationsEntered.push(operation);
     }
 
